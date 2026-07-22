@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diagnostic Results - IrrigaAI</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <!-- Header & Navigation -->
+    <nav class="navbar">
+        <div class="logo">🌱 IrrigaAI</div>
+        <ul class="nav-links">
+            <li><a href="/" id="nav-home">Home</a></li>
+            <li><a href="/dashboard.html" id="nav-dash">Dashboard</a></li>
+            <li><a href="/upload.html" id="nav-upload" class="active">Disease Detector</a></li>
+            <li class="user-badge" id="navbar-user-badge">Loading Farm...</li>
+            <li><a href="#" id="logout-btn" class="btn btn-outline" style="padding: 6px 16px; font-size: 0.85rem;">Logout</a></li>
+        </ul>
+    </nav>
+
+    <!-- Results Display -->
+    <main class="section" style="padding: 40px 8%;">
+        <div style="max-width: 1000px; margin: 0 auto;">
+            
+            <header style="margin-bottom: 30px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;">
+                <div>
+                    <h1 style="font-size: 2.2rem; font-weight: 800;">Diagnostic Report</h1>
+                    <p style="color: var(--text-muted); font-size: 0.95rem;">Automated neural network classification feedback</p>
+                </div>
+                <div style="display: flex; gap: 10px;">
+                    <a href="/upload.html" class="btn btn-outline" style="border-radius: 8px; font-size: 0.9rem; padding: 10px 20px;">Scan Another Leaf</a>
+                    <a href="/dashboard.html" class="btn btn-primary" style="border-radius: 8px; font-size: 0.9rem; padding: 10px 20px;">Return to Dashboard</a>
+                </div>
+            </header>
+            
+            <div class="diagnosis-container">
+                <!-- Left column: Uploaded Leaf image + Confidence meter -->
+                <section class="glass-card diagnosis-header-card" style="display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                    <h3 style="font-size: 1.15rem; color: var(--text-muted); margin-bottom: 20px;">Uploaded Plant Sample</h3>
+                    <div style="width: 100%; border-radius: 12px; overflow: hidden; border: 1px solid var(--border-color); background: rgba(0,0,0,0.2); aspect-ratio: 4/3; display: flex; align-items: center; justify-content: center; margin-bottom: 20px;">
+                        <img id="scanned-image" style="width: 100%; height: 100%; object-fit: cover;" src="" alt="Leaf sample image">
+                    </div>
+                    
+                    <div style="text-align: center; width: 100%; border-top: 1px solid var(--border-color); padding-top: 20px;">
+                        <span style="font-size: 0.85rem; color: var(--text-muted); display: block; margin-bottom: 5px;">CLASSIFICATION CONFIDENCE</span>
+                        <div style="font-size: 2.5rem; font-weight: 800; color: var(--color-secondary); font-family: var(--font-heading);" id="metric-confidence">92.4%</div>
+                        <div style="width: 100%; height: 6px; border-radius: 3px; background: rgba(255,255,255,0.05); margin-top: 10px; overflow: hidden;">
+                            <div style="height: 100%; width: 92.4%; background: linear-gradient(90deg, var(--color-secondary) 0%, var(--color-primary) 100%);" id="confidence-bar"></div>
+                        </div>
+                    </div>
+                </section>
+                
+                <!-- Right column: Diagnosis result & advice sheets -->
+                <section class="glass-card" style="display: flex; flex-direction: column; justify-content: space-between;">
+                    <div>
+                        <div style="display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border-color); padding-bottom: 15px; margin-bottom: 20px;">
+                            <div>
+                                <span style="font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em;">Identified Crop Family</span>
+                                <h2 id="crop-label" style="font-size: 1.6rem; font-weight: 800;">Tomato Plant</h2>
+                            </div>
+                            <span class="disease-badge diseased" id="status-badge">DISEASE DETECTED</span>
+                        </div>
+                        
+                        <div style="margin-bottom: 24px;">
+                            <h3 style="font-size: 1.1rem; color: var(--text-muted); margin-bottom: 8px;">Pathogen / Diagnostic Label</h3>
+                            <h2 style="font-size: 2.2rem; font-weight: 800; font-family: var(--font-heading); line-height: 1.1;" id="disease-label" class="glow-text-primary">Early Blight</h2>
+                        </div>
+                        
+                        <div style="margin-bottom: 24px; padding: 16px; border-radius: 12px; background: rgba(239, 68, 68, 0.03); border: 1px solid rgba(239, 68, 68, 0.15);" id="treatment-card">
+                            <h3 style="font-size: 1.05rem; display: flex; align-items: center; gap: 8px; margin-bottom: 8px; color: var(--color-danger);" id="treatment-card-title">
+                                💊 Prescribed Treatment
+                            </h3>
+                            <p style="font-size: 0.95rem; line-height: 1.6; color: var(--text-main);" id="treatment-text">
+                                Apply copper-based fungicides. Prune lower leaves to improve air circulation. Avoid overhead watering.
+                            </p>
+                        </div>
+                        
+                        <div style="padding: 16px; border-radius: 12px; background: rgba(255,255,255,0.02); border: 1px solid var(--border-color);">
+                            <h3 style="font-size: 1.05rem; display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+                                📋 Farmer Recovery Guide
+                            </h3>
+                            <p style="font-size: 0.95rem; line-height: 1.6; color: var(--text-muted);" id="rec-text">
+                                Isolate affected plants; reduce humidity.
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <div style="border-top: 1px solid var(--border-color); padding-top: 20px; margin-top: 30px; display: flex; justify-content: flex-end;">
+                        <span style="font-size: 0.8rem; color: var(--text-muted);">Diagnosis logged to historical database automatically.</span>
+                    </div>
+                </section>
+            </div>
+            
+        </div>
+    </main>
+
+    <script src="js/app.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const rawResult = sessionStorage.getItem('last_diagnostic_result');
+            if (!rawResult) {
+                // No result found, redirect back
+                window.location.href = '/upload.html';
+                return;
+            }
+            
+            try {
+                const result = JSON.parse(rawResult);
+                
+                // Set Crop
+                document.getElementById('crop-label').textContent = `${result.crop} Leaf Sample`;
+                
+                // Set Disease & Health state
+                const diseaseLabel = document.getElementById('disease-label');
+                const statusBadge = document.getElementById('status-badge');
+                const treatmentCard = document.getElementById('treatment-card');
+                const treatmentTitle = document.getElementById('treatment-card-title');
+                
+                diseaseLabel.textContent = result.disease;
+                
+                if (result.health_status === 'Healthy') {
+                    statusBadge.textContent = 'HEALTHY PLANT';
+                    statusBadge.className = 'disease-badge healthy';
+                    diseaseLabel.className = 'glow-text-primary';
+                    diseaseLabel.style.color = 'var(--color-primary)';
+                    
+                    // Style treatment card as info card
+                    treatmentCard.style.background = 'rgba(16, 185, 129, 0.03)';
+                    treatmentCard.style.borderColor = 'rgba(16, 185, 129, 0.15)';
+                    treatmentTitle.innerHTML = '🥗 Soil & Plant Nutrition';
+                    treatmentTitle.style.color = 'var(--color-primary)';
+                } else {
+                    statusBadge.textContent = 'DISEASE DETECTED';
+                    statusBadge.className = 'disease-badge diseased';
+                    diseaseLabel.className = 'glow-text-primary';
+                    diseaseLabel.style.color = 'var(--color-danger)';
+                    
+                    treatmentCard.style.background = 'rgba(239, 68, 68, 0.03)';
+                    treatmentCard.style.borderColor = 'rgba(239, 68, 68, 0.15)';
+                    treatmentTitle.innerHTML = '💊 Prescribed Treatment';
+                    treatmentTitle.style.color = 'var(--color-danger)';
+                }
+                
+                // Set Treatments
+                document.getElementById('treatment-text').textContent = result.treatment;
+                document.getElementById('rec-text').textContent = result.recommendation;
+                
+                // Set Confidence
+                document.getElementById('metric-confidence').textContent = `${result.confidence}%`;
+                document.getElementById('metric-confidence').style.color = result.health_status === 'Healthy' ? 'var(--color-primary)' : 'var(--color-danger)';
+                document.getElementById('confidence-bar').style.width = `${result.confidence}%`;
+                document.getElementById('confidence-bar').style.background = result.health_status === 'Healthy' ? 'var(--color-primary)' : 'var(--color-danger)';
+                
+                // Set Image Preview
+                if (result.image_data_url) {
+                    document.getElementById('scanned-image').src = result.image_data_url;
+                } else {
+                    document.getElementById('scanned-image').src = 'https://images.unsplash.com/photo-1592417817098-8f3d6eb19675?auto=format&fit=crop&q=80&w=600'; // fallback leaf image
+                }
+                
+            } catch (err) {
+                console.error("Error loading results details:", err);
+                window.location.href = '/upload.html';
+            }
+        });
+    </script>
+</body>
+</html>

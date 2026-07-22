@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register - IrrigaAI</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <!-- Header & Navigation -->
+    <nav class="navbar">
+        <div class="logo">🌱 IrrigaAI</div>
+        <ul class="nav-links">
+            <li><a href="/" id="nav-home">Home</a></li>
+            <li><a href="/login.html" id="nav-login">Login</a></li>
+            <li><a href="/register.html" id="nav-register" class="active">Register</a></li>
+        </ul>
+    </nav>
+
+    <!-- Registration Container -->
+    <div class="auth-container" style="min-height: 95vh;">
+        <div class="glass-card auth-card" style="max-width: 600px;">
+            <div class="auth-header">
+                <h2>Create Your Account</h2>
+                <p>Register your profile and farm to configure automated irrigation</p>
+            </div>
+            
+            <form id="register-form">
+                <div id="error-message" style="display: none; padding: 12px; border-radius: 8px; background: rgba(239, 68, 68, 0.1); border: 1px solid var(--color-danger); color: var(--color-danger); font-size: 0.9rem; margin-bottom: 20px;"></div>
+                
+                <h3 style="font-size: 1.1rem; border-bottom: 1px solid var(--border-color); padding-bottom: 8px; margin-bottom: 16px; color: var(--color-primary);">1. User Credentials</h3>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label" for="username">Username</label>
+                        <input class="form-control" type="text" id="username" required placeholder="Pick a username">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="email">Email Address</label>
+                        <input class="form-control" type="email" id="email" required placeholder="farmer@domain.com">
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="password">Password</label>
+                    <input class="form-control" type="password" id="password" required placeholder="Create password (min 6 characters)">
+                </div>
+                
+                <h3 style="font-size: 1.1rem; border-bottom: 1px solid var(--border-color); padding-bottom: 8px; margin-top: 24px; margin-bottom: 16px; color: var(--color-secondary);">2. Farm Profile</h3>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label" for="farm_name">Farm Name</label>
+                        <input class="form-control" type="text" id="farm_name" required placeholder="e.g. Green Acres">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="location">Location</label>
+                        <input class="form-control" type="text" id="location" placeholder="e.g. California, USA">
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label" for="crop_type">Primary Crop</label>
+                        <select class="form-control" id="crop_type" style="height: 47px;">
+                            <option value="Tomato">Tomato</option>
+                            <option value="Paddy">Paddy (Rice)</option>
+                            <option value="Banana">Banana</option>
+                            <option value="Potato">Potato</option>
+                            <option value="Cotton">Cotton</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="farm_size">Farm Size (Acres)</label>
+                        <input class="form-control" type="number" step="0.1" id="farm_size" required value="1.0" min="0.1">
+                    </div>
+                </div>
+                
+                <button type="submit" id="submit-btn" class="btn btn-primary" style="width: 100%; margin-top: 20px;">
+                    Register Farm
+                </button>
+            </form>
+            
+            <div class="auth-footer">
+                Already have an account? <a href="/login.html">Sign in here</a>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/app.js"></script>
+    <script>
+        document.getElementById('register-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const usernameInput = document.getElementById('username').value;
+            const emailInput = document.getElementById('email').value;
+            const passwordInput = document.getElementById('password').value;
+            const farmNameInput = document.getElementById('farm_name').value;
+            const locationInput = document.getElementById('location').value;
+            const cropTypeInput = document.getElementById('crop_type').value;
+            const farmSizeInput = document.getElementById('farm_size').value;
+            
+            const errorDiv = document.getElementById('error-message');
+            const submitBtn = document.getElementById('submit-btn');
+            
+            errorDiv.style.display = 'none';
+            
+            if (passwordInput.length < 6) {
+                errorDiv.textContent = 'Password must be at least 6 characters.';
+                errorDiv.style.display = 'block';
+                return;
+            }
+            
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Registering...';
+            
+            try {
+                const response = await fetch('/api/auth/register', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        username: usernameInput,
+                        email: emailInput,
+                        password: passwordInput,
+                        farm_name: farmNameInput,
+                        location: locationInput,
+                        crop_type: cropTypeInput,
+                        farm_size: parseFloat(farmSizeInput)
+                    })
+                });
+                
+                const data = await response.json();
+                if (!response.ok) {
+                    throw new Error(data.error || 'Registration failed');
+                }
+                
+                // Success, redirect to dashboard
+                window.location.href = '/dashboard.html';
+            } catch (err) {
+                errorDiv.textContent = err.message;
+                errorDiv.style.display = 'block';
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Register Farm';
+            }
+        });
+    </script>
+</body>
+</html>

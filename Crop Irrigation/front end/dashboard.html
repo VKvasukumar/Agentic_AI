@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - IrrigaAI</title>
+    <link rel="stylesheet" href="css/style.css">
+    <!-- Chart.js CDN for historical trend visualizations -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+    <!-- Header & Navigation -->
+    <nav class="navbar">
+        <div class="logo">🌱 IrrigaAI</div>
+        <ul class="nav-links">
+            <li><a href="/" id="nav-home">Home</a></li>
+            <li><a href="/dashboard.html" id="nav-dash" class="active">Dashboard</a></li>
+            <li><a href="/upload.html" id="nav-upload">Disease Detector</a></li>
+            <li class="user-badge" id="navbar-user-badge">Loading Farm...</li>
+            <li><a href="#" id="logout-btn" class="btn btn-outline" style="padding: 6px 16px; font-size: 0.85rem;">Logout</a></li>
+        </ul>
+    </nav>
+
+    <!-- Dashboard Main Area -->
+    <main class="section" style="padding: 40px 8%;">
+        
+        <!-- Welcome Header -->
+        <header class="dash-header">
+            <div class="dash-welcome">
+                <h1 id="farm-title">Green Valley Farm</h1>
+                <p id="farm-location">California, USA</p>
+            </div>
+            <div class="status-indicator">
+                <span class="status-label" style="color: var(--text-muted); font-size: 0.95rem;">System Health:</span>
+                <span class="status-dot active"></span>
+                <span style="font-weight: 600; font-size: 0.95rem;">ONLINE</span>
+            </div>
+        </header>
+
+        <!-- Dynamic Trigger Panel -->
+        <section class="glass-card col-12" style="margin-bottom: 24px; padding: 16px 24px; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 15px;">
+            <div>
+                <h3 style="font-size: 1.1rem; margin-bottom: 4px;">Simulate Telemetry Update</h3>
+                <p style="color: var(--text-muted); font-size: 0.85rem;">Submit new sensor reading fields to recalculate recommendations.</p>
+            </div>
+            <form id="simulate-reading-form" style="display: flex; flex-wrap: wrap; gap: 10px; align-items: center;">
+                <input class="form-control" type="number" id="sim-moisture" required placeholder="Moisture %" min="0" max="100" style="width: 110px; padding: 8px 12px;">
+                <input class="form-control" type="number" id="sim-temp" required placeholder="Temp °C" min="-10" max="50" style="width: 95px; padding: 8px 12px;">
+                <select class="form-control" id="sim-forecast" style="width: 110px; padding: 8px 12px; height: 39px;">
+                    <option value="sunny">Sunny</option>
+                    <option value="cloudy">Cloudy</option>
+                    <option value="rainy">Rainy</option>
+                    <option value="windy">Windy</option>
+                </select>
+                <input class="form-control" type="number" id="sim-rainfall" placeholder="Rain mm" step="0.1" value="0.0" style="width: 95px; padding: 8px 12px;">
+                <button type="submit" class="btn btn-primary" style="padding: 8px 20px; font-size: 0.85rem; border-radius: 8px;">Run AI Predict</button>
+            </form>
+        </section>
+
+        <!-- Widgets Dashboard Grid -->
+        <div class="dashboard-grid">
+            
+            <!-- Valve / Pump Control Box (Left) -->
+            <section class="glass-card col-4 metric-card" style="display: flex; flex-direction: column; justify-content: space-between;">
+                <div>
+                    <h3 style="font-size: 1.25rem; margin-bottom: 12px; color: var(--color-secondary);">Irrigation Valve Control</h3>
+                    <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 24px;">Activate or deactivate watering nozzles manually. The scheduled sequence runs automatically unless overridden.</p>
+                </div>
+                
+                <div>
+                    <div class="switch-container">
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <span class="status-dot" id="pump-indicator-dot"></span>
+                            <span id="pump-status-label" style="font-weight: 700; font-size: 1.1rem; color: var(--text-muted);">VALVE OFF</span>
+                        </div>
+                        <label class="switch">
+                            <input type="checkbox" id="pump-toggle-switch">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    
+                    <div id="pump-pulse-box" style="margin-top: 15px; text-align: center; display: none;">
+                        <span style="font-size: 0.85rem; color: var(--color-secondary); letter-spacing: 0.05em; font-weight: 700; display: block; margin-bottom: 5px;">PUMP ACTIVELY WATERING</span>
+                        <div style="display: flex; justify-content: center; gap: 4px;">
+                            <span style="width: 6px; height: 6px; border-radius: 50%; background: var(--color-secondary); animation: pulse 0.6s infinite alternate;"></span>
+                            <span style="width: 6px; height: 6px; border-radius: 50%; background: var(--color-secondary); animation: pulse 0.6s infinite alternate 0.2s;"></span>
+                            <span style="width: 6px; height: 6px; border-radius: 50%; background: var(--color-secondary); animation: pulse 0.6s infinite alternate 0.4s;"></span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Soil Telemetry Gauges (Center) -->
+            <section class="glass-card col-4 metric-card moisture">
+                <div class="metric-header">
+                    <span>SOIL PARAMETERS</span>
+                    <span>Moisture & NPK</span>
+                </div>
+                <div class="metric-value" id="val-moisture">45.0%</div>
+                <div class="metric-footer" style="margin-bottom: 16px;">Last recorded: <span id="soil-timestamp">N/A</span></div>
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; border-top: 1px solid var(--border-color); padding-top: 15px;">
+                    <div style="text-align: center;">
+                        <span style="font-size: 0.75rem; color: var(--text-muted); display: block;">Nitrogen (N)</span>
+                        <span style="font-weight: 700; font-size: 1.1rem; color: #f87171;" id="val-nitrogen">80</span> <span style="font-size: 0.7rem; color: var(--text-muted);">mg/kg</span>
+                    </div>
+                    <div style="text-align: center; border-left: 1px solid var(--border-color); border-right: 1px solid var(--border-color);">
+                        <span style="font-size: 0.75rem; color: var(--text-muted); display: block;">Phosphorus (P)</span>
+                        <span style="font-weight: 700; font-size: 1.1rem; color: #fbbf24;" id="val-phosphorus">40</span> <span style="font-size: 0.7rem; color: var(--text-muted);">mg/kg</span>
+                    </div>
+                    <div style="text-align: center;">
+                        <span style="font-size: 0.75rem; color: var(--text-muted); display: block;">Potassium (K)</span>
+                        <span style="font-weight: 700; font-size: 1.1rem; color: #60a5fa;" id="val-potassium">140</span> <span style="font-size: 0.7rem; color: var(--text-muted);">mg/kg</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Ambient Climate Widget (Right) -->
+            <section class="glass-card col-4 metric-card temp">
+                <div class="metric-header">
+                    <span>AMBIENT CLIMATE</span>
+                    <span id="forecast-badge" style="text-transform: uppercase; font-weight: 700; font-size: 0.8rem; color: var(--color-warning);">Sunny</span>
+                </div>
+                <div class="metric-value" id="val-temperature">25.0°C</div>
+                <div class="metric-footer" style="margin-bottom: 16px;">Weather Station Update</div>
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; border-top: 1px solid var(--border-color); padding-top: 15px;">
+                    <div style="text-align: center; border-right: 1px solid var(--border-color);">
+                        <span style="font-size: 0.75rem; color: var(--text-muted); display: block;">Air Humidity</span>
+                        <span style="font-weight: 700; font-size: 1.1rem;" id="val-humidity">60.0%</span>
+                    </div>
+                    <div style="text-align: center;">
+                        <span style="font-size: 0.75rem; color: var(--text-muted); display: block;">Rain Forecast</span>
+                        <span style="font-weight: 700; font-size: 1.1rem;" id="val-rainfall">0.0 mm</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- AI Recommendation Box (Span 12) -->
+            <section class="glass-card col-12" id="recommendation-card">
+                <h3 style="font-size: 1.25rem; margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
+                    🤖 AI Irrigation Advisory
+                </h3>
+                <div id="rec-loading" style="padding: 10px 0; color: var(--text-muted);">Analyzing sensor data...</div>
+                
+                <div id="rec-content" style="display: none;">
+                    <div class="rec-box" id="rec-box-style">
+                        <div class="rec-title">
+                            <span id="rec-icon">✔️</span> 
+                            <span id="rec-status">No Irrigation Needed</span>
+                        </div>
+                        <p id="rec-reason" style="font-size: 0.95rem; margin-bottom: 10px;">The soil is currently saturated with moisture and does not require watering.</p>
+                        
+                        <div style="display: flex; gap: 20px; font-size: 0.85rem; color: var(--text-muted); flex-wrap: wrap;">
+                            <div>Confidence: <strong style="color: var(--text-main);" id="rec-confidence">95%</strong></div>
+                            <div id="rec-flow-details">Volume: <strong style="color: var(--text-main);" id="rec-water">0 L</strong> | Duration: <strong style="color: var(--text-main);" id="rec-duration">0 min</strong></div>
+                        </div>
+                    </div>
+                    
+                    <div id="rec-action-container" style="margin-top: 16px; display: none; gap: 10px;">
+                        <button id="apply-ai-schedule" class="btn btn-secondary" style="padding: 8px 20px; font-size: 0.85rem; border-radius: 8px;">Execute Recommended Schedule</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Chart Panel (Left-Bottom Span 8) -->
+            <section class="glass-card col-8">
+                <h3 style="font-size: 1.25rem; margin-bottom: 20px;">Soil Moisture Trends (Past 24h)</h3>
+                <div style="position: relative; height: 300px; width: 100%;">
+                    <canvas id="moisture-trend-chart"></canvas>
+                </div>
+            </section>
+
+            <!-- Recent activities / Prediction log (Right-Bottom Span 4) -->
+            <section class="glass-card col-4" style="display: flex; flex-direction: column; justify-content: space-between;">
+                <div>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                        <h3 style="font-size: 1.25rem;">Analysis Records</h3>
+                        <a href="/api/reports/download" class="btn btn-outline" style="padding: 6px 12px; font-size: 0.8rem; border-radius: 8px; display: inline-flex;" id="btn-download-report">Export</a>
+                    </div>
+                    <div id="recent-actions-list" style="max-height: 280px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px;">
+                        <!-- Populate recent predictions dynamically -->
+                        <div style="color: var(--text-muted); font-size: 0.9rem; text-align: center; padding: 20px 0;">Loading log data...</div>
+                    </div>
+                </div>
+                
+                <div style="border-top: 1px solid var(--border-color); padding-top: 15px; margin-top: 15px; display: flex; flex-direction: column; gap: 10px;">
+                    <a href="/upload.html" class="btn btn-outline" style="width: 100%; justify-content: center; font-size: 0.85rem; border-radius: 8px;">
+                        📷 Upload Leaf for Diagnosis
+                    </a>
+                </div>
+            </section>
+
+        </div>
+    </main>
+
+    <!-- Scripts -->
+    <script src="js/app.js"></script>
+    <script src="js/dashboard.js"></script>
+</body>
+</html>

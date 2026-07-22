@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - IrrigaAI</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+    <!-- Header & Navigation -->
+    <nav class="navbar">
+        <div class="logo">🌱 IrrigaAI</div>
+        <ul class="nav-links">
+            <li><a href="/" id="nav-home">Home</a></li>
+            <li><a href="/login.html" id="nav-login" class="active">Login</a></li>
+            <li><a href="/register.html" id="nav-register" class="btn btn-primary"
+                    style="padding: 8px 20px; color: white;">Register</a></li>
+        </ul>
+    </nav>
+
+    <!-- Login Container -->
+    <div class="auth-container">
+        <div class="glass-card auth-card">
+            <div class="auth-header">
+                <h2>Welcome Back</h2>
+                <p>Sign in to monitor soil metrics and manage pump automation</p>
+            </div>
+
+            <form id="login-form">
+                <div id="error-message"
+                    style="display: none; padding: 12px; border-radius: 8px; background: rgba(239, 68, 68, 0.1); border: 1px solid var(--color-danger); color: var(--color-danger); font-size: 0.9rem; margin-bottom: 20px;">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="username">Username</label>
+                    <input class="form-control" type="text" id="username" required placeholder="Enter your username">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="password">Password</label>
+                    <input class="form-control" type="password" id="password" required
+                        placeholder="Enter your password">
+                </div>
+
+                <button type="submit" id="submit-btn" class="btn btn-primary" style="width: 100%; margin-top: 10px;">
+                    Sign In
+                </button>
+            </form>
+
+            <div class="auth-footer">
+                Don't have an account? <a href="/register.html">Create one here</a>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/app.js"></script>
+    <script>
+        document.getElementById('login-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const usernameInput = document.getElementById('username').value;
+            const passwordInput = document.getElementById('password').value;
+            const errorDiv = document.getElementById('error-message');
+            const submitBtn = document.getElementById('submit-btn');
+
+            errorDiv.style.display = 'none';
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Signing In...';
+
+            try {
+                const response = await fetch('/api/auth/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username: usernameInput, password: passwordInput })
+                });
+
+                const data = await response.json();
+                if (!response.ok) {
+                    throw new Error(data.error || 'Login failed');
+                }
+
+                // Successful login, redirect to dashboard
+                window.location.href = '/dashboard.html';
+            } catch (err) {
+                errorDiv.textContent = err.message;
+                errorDiv.style.display = 'block';
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Sign In';
+            }
+        });
+    </script>
+</body>
+
+</html>

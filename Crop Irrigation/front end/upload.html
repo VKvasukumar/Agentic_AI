@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Crop Disease Detector - IrrigaAI</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <!-- Header & Navigation -->
+    <nav class="navbar">
+        <div class="logo">🌱 IrrigaAI</div>
+        <ul class="nav-links">
+            <li><a href="/" id="nav-home">Home</a></li>
+            <li><a href="/dashboard.html" id="nav-dash">Dashboard</a></li>
+            <li><a href="/upload.html" id="nav-upload" class="active">Disease Detector</a></li>
+            <li class="user-badge" id="navbar-user-badge">Loading Farm...</li>
+            <li><a href="#" id="logout-btn" class="btn btn-outline" style="padding: 6px 16px; font-size: 0.85rem;">Logout</a></li>
+        </ul>
+    </nav>
+
+    <!-- Upload Interface Main Container -->
+    <main class="section" style="padding: 40px 8%;">
+        <div class="glass-card" style="max-width: 700px; margin: 0 auto;">
+            <div style="text-align: center; margin-bottom: 30px;">
+                <h1 style="font-size: 2.2rem; margin-bottom: 8px; font-weight: 800;">Crop Health Diagnostic Hub</h1>
+                <p style="color: var(--text-muted); font-size: 0.95rem;">Upload photos of damaged or discolored crop leaves to run real-time neural network diagnostics.</p>
+            </div>
+            
+            <form id="upload-form">
+                <div id="error-message" style="display: none; padding: 12px; border-radius: 8px; background: rgba(239, 68, 68, 0.1); border: 1px solid var(--color-danger); color: var(--color-danger); font-size: 0.9rem; margin-bottom: 20px;"></div>
+                
+                <!-- Crop Type Input -->
+                <div class="form-group" style="margin-bottom: 24px;">
+                    <label class="form-label" for="crop-select">Select Plant Family</label>
+                    <select class="form-control" id="crop-select" required style="height: 48px;">
+                        <option value="">-- Choose Crop Type --</option>
+                        <option value="Tomato">Tomato</option>
+                        <option value="Banana">Banana</option>
+                        <option value="Paddy">Paddy (Rice)</option>
+                        <option value="Potato">Potato</option>
+                        <option value="Cotton">Cotton</option>
+                    </select>
+                </div>
+                
+                <!-- Drag and Drop area -->
+                <div class="upload-area" id="dropzone">
+                    <input type="file" id="file-input" accept="image/png, image/jpeg, image/jpg" style="display: none;">
+                    <div class="upload-icon" id="dropzone-icon">📷</div>
+                    <h3 id="dropzone-text" style="font-size: 1.15rem; margin-bottom: 8px;">Drag & Drop Leaf Image</h3>
+                    <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 12px;">Supported formats: JPEG, PNG (Max 16MB)</p>
+                    <button type="button" class="btn btn-outline" id="browse-btn" style="padding: 8px 20px; font-size: 0.85rem; border-radius: 8px;">Browse Local Files</button>
+                    
+                    <img id="file-preview" alt="Leaf upload preview">
+                </div>
+                
+                <button type="submit" class="btn btn-primary" id="analyze-btn" style="width: 100%; margin-top: 30px; justify-content: center;" disabled>
+                    🔍 Start Diagnostic Analysis
+                </button>
+            </form>
+        </div>
+    </main>
+
+    <script src="js/app.js"></script>
+    <script src="js/upload.js"></script>
+</body>
+</html>
